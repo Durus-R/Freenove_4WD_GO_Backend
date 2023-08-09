@@ -3,9 +3,7 @@ module Freenove_4WD_GO_Backend
 go 1.20
 
 require (
-	github.com/d2r2/go-i2c v0.0.0-20191123181816-73a8a799d6bc
 	github.com/go-daq/smbus v0.0.0-20201216173259-5725b4593606
-	github.com/stianeikeland/go-rpio/v4 v4.6.0
 )
 
 require (
