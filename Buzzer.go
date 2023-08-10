@@ -1,22 +1,16 @@
 package main
 
 import (
-	"gobot.io/x/gobot/v2/drivers/gpio"
-	"gobot.io/x/gobot/v2/platforms/raspi"
 	"strconv"
 	"time"
+
+	"gobot.io/x/gobot/v2/drivers/gpio"
+	"gobot.io/x/gobot/v2/platforms/raspi"
 )
 
 type Buzzer struct {
 	driver *gpio.BuzzerDriver
 }
-
-type Tone struct {
-	duration float64 // Beats - see https://github.com/hybridgroup/gobot/blob/v2.1.1/drivers/gpio/buzzer_driver.go#L10
-	pitch    float64 // Hz or 0 in a Pause
-}
-
-type Song []Tone
 
 func (b Buzzer) On() error {
 	return b.driver.On()
@@ -43,11 +37,20 @@ func (b Buzzer) PlayTone(note float64, duration float64) error {
 	}
 }
 
-func (b Buzzer) PlaySong(song Song) error {
-	for i := 0; i < len(song); i++ {
-		err := b.PlayTone(song[i].pitch, song[i].duration)
-		if err != nil {
-			return err
+func (b Buzzer) PlaySong(song Song, finish chan struct{}) error {
+	for _, s := range song {
+		select {
+		case <-finish:
+			{
+				return nil
+			}
+		default:
+			{
+				err := b.PlayTone(s.pitch, s.duration)
+				if err != nil {
+					return err
+				}
+			}
 		}
 	}
 	return nil
