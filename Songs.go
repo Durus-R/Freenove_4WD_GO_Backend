@@ -10,12 +10,12 @@ import (
 	"unicode"
 )
 
-type Tone struct {
+type Note struct {
 	duration float64 // Beats - see https://github.com/hybridgroup/gobot/blob/v2.1.1/drivers/gpio/buzzer_driver.go#L10
 	pitch    float64 // Hz or 0 in a Pause
 }
 
-type Song []Tone
+type Song []Note
 
 func (s Song) EstimatedDuration(bpm int) float64 {
 	res := 0.0
@@ -71,7 +71,7 @@ func ParseSongFile(reader io.Reader) (Song, error) {
 			}
 		}
 
-		song = append(song, Tone{duration: duration, pitch: pitch})
+		song = append(song, Note{duration: duration, pitch: pitch})
 	}
 
 	if err := scanner.Err(); err != nil {
