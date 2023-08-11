@@ -28,17 +28,17 @@ func (b Buzzer) SetBPM(bpm float64) {
 	b.driver.BPM = bpm
 }
 
-func (b Buzzer) PlayTone(note float64, duration float64) error {
-	if note <= 1 {
-		time.Sleep(time.Duration(60 / b.driver.BPM * duration))
+func (b Buzzer) PlayTone(note Note) error {
+	if note.pitch <= 1 {
+		time.Sleep(time.Duration(60 / b.driver.BPM * note.duration))
 		return nil
 	} else {
-		return b.driver.Tone(note, duration)
+		return b.driver.Tone(note.pitch, note.duration)
 	}
 }
 
 func (b Buzzer) PlaySong(song Song, finish chan struct{}, done chan error) error {
-	for _, s := range song {
+	for _, note := range song {
 		select {
 		case <-finish:
 			{
@@ -49,7 +49,7 @@ func (b Buzzer) PlaySong(song Song, finish chan struct{}, done chan error) error
 			}
 		default:
 			{
-				err := b.PlayTone(s.pitch, s.duration)
+				err := b.PlayTone(note)
 				if err != nil {
 					if done != nil {
 						done <- err
