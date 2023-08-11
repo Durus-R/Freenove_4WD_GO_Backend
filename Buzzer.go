@@ -37,21 +37,30 @@ func (b Buzzer) PlayTone(note float64, duration float64) error {
 	}
 }
 
-func (b Buzzer) PlaySong(song Song, finish chan struct{}) error {
+func (b Buzzer) PlaySong(song Song, finish chan struct{}, done chan error) error {
 	for _, s := range song {
 		select {
 		case <-finish:
 			{
+				if done != nil {
+					done <- nil
+				}
 				return nil
 			}
 		default:
 			{
 				err := b.PlayTone(s.pitch, s.duration)
 				if err != nil {
+					if done != nil {
+						done <- err
+					}
 					return err
 				}
 			}
 		}
+	}
+	if done != nil {
+		done <- nil
 	}
 	return nil
 }
