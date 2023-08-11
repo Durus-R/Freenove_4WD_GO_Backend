@@ -59,7 +59,7 @@ func GetDirectionRight() Direction {
 	}
 }
 
-func GetDirectionStop() Direction {
+func GetDirectionHalt() Direction {
 	return Direction{
 		LeftUp:   0,
 		LeftLow:  0,
