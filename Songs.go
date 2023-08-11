@@ -17,6 +17,14 @@ type Tone struct {
 
 type Song []Tone
 
+func (s Song) EstimatedDuration(bpm int) float64 {
+	res := 0.0
+	for _, tone := range s {
+		res += tone.duration
+	}
+	return float64(60/bpm) * res
+}
+
 func containsLetter(s string) bool {
 	for _, r := range s {
 		if unicode.IsLetter(r) {
