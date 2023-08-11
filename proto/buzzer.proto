@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package main;
+
+import "google/protobuf/empty.proto";
+
+service Buzzer {
+  rpc On (google.protobuf.Empty) returns (Error) {}
+  rpc Off (google.protobuf.Empty) returns (Error) {}
+  rpc Toggle (google.protobuf.Empty) returns (Error) {}
+  rpc SetBPM (SetBPMRequest) returns (google.protobuf.Empty) {}
+  rpc CalculateDuration(Song) returns (SongDuration) {}
+  rpc ParseSong(SongStringPayload) returns (Song) {}
+  rpc AsyncPlaySong(Song) returns (SongIsPlaying) {}
+  rpc DoesSongStillPlay(SongIsPlaying) returns (SongStatus) {}
+  rpc StopSong(SongIsPlaying) returns (google.protobuf.Empty) {}
+}
+
+message SongStringPayload {
+  string payload = 1;
+}
+
+message SongStatus {
+  bool isPlaying = 1;
+}
+
+message SongDuration {
+  float length = 1;
+}
+
+message SongIsPlaying {
+  int32 uid = 1;
+}
+
+message SetBPMRequest {
+  int32 bpm = 1;
+}
+
+message Error {
+  string text = 1;
+  bool isError = 2;
+}
+
+message Note {
+  float duration = 1;
+  float pitch = 2;
+}
+
+message Song {
+  repeated Note notes = 1;
+}

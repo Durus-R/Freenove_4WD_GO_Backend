@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package main;
+
+import "google/protobuf/empty.proto";
+
+service Motor {
+  rpc Forward (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc Backward (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc Left (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc Right (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
+  rpc Halt (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+
+  rpc SetMotorModel (MotorModel) returns (google.protobuf.Empty) {}
+  rpc GetMotorModel (google.protobuf.Empty) returns (MotorModel) {}
+}
+
+message MotorModel {
+  int32 LeftUp = 1;
+  int32 LeftLow = 2;
+  int32 RightUp = 3;
+  int32 RightLow = 4;
+}

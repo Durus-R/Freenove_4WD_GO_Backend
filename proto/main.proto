@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package main;
+
+import "google/protobuf/empty.proto";
+
+service Car {
+  rpc Ping (google.protobuf.Empty) returns (Pong) {}
+}
+
+message Pong {
+  uint32 pingGoogle = 1;
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package main;
+
+import "google/protobuf/empty.proto";
+
+service Servo {
+  rpc SetVerticalAngle(Angle) returns (google.protobuf.Empty) {}
+  rpc SetHorizontalAngle(Angle) returns (google.protobuf.Empty) {}
+  rpc SetHomePosition(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+}
+
+message Angle {
+  uint32 angle = 1;
+}

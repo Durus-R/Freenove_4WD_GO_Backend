@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package main;
+
+import "google/protobuf/empty.proto";
+
+service ADC {
+  rpc Battery (google.protobuf.Empty) returns (BatteryState) {}
+  rpc IDR (google.protobuf.Empty) returns (IDRState) {}
+}
+
+message BatteryState {
+  float loaded = 1;
+}
+
+message IDRState {
+  float left = 1;
+  float right = 2;
+}

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package main;
+
+import "google/protobuf/empty.proto";
+
+service LED {
+  rpc StopEffect (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc StartColorWipe (Color) returns (google.protobuf.Empty) {}
+  rpc StartTheaterChase (Color) returns (google.protobuf.Empty) {}
+  rpc StartRainbow (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc StartRainbowCycle (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc StartTheaterChaseRainbow (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc ApplyCustomColors (Colors) returns (google.protobuf.Empty) {}
+  rpc IsDark (google.protobuf.Empty) returns (IsDarkResult) {}
+}
+
+message Color {
+  int32 red = 1;
+  int32 green = 2; // TODO: Really green?
+  int32 blue = 3;
+}
+
+message IsDarkResult {
+  bool dark = 1;
+}
+
+message Colors {
+  repeated Color colors = 1; // Max Length 8!
+}
