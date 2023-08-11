@@ -16,6 +16,7 @@ type RGBStrip struct {
 	length int
 }
 
+// TODO: Make everything stoppable and send when done!
 func (r RGBStrip) customColorWipe(color uint32, waitMs time.Duration) {
 	for i := 0; i < r.length; i++ {
 		r.ws2811.Leds(0)[i] = color
