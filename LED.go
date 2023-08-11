@@ -16,7 +16,7 @@ type RGBStrip struct {
 	length int
 }
 
-func (r RGBStrip) ColorWipe(color uint32, waitMs time.Duration) {
+func (r RGBStrip) customColorWipe(color uint32, waitMs time.Duration) {
 	for i := 0; i < r.length; i++ {
 		r.ws2811.Leds(0)[i] = color
 		err := r.ws2811.Render()
@@ -27,11 +27,11 @@ func (r RGBStrip) ColorWipe(color uint32, waitMs time.Duration) {
 	}
 }
 
-func (r RGBStrip) DefaultColorWipe(color uint32) {
-	r.ColorWipe(color, 50)
+func (r RGBStrip) ColorWipe(color uint32) {
+	r.customColorWipe(color, 50)
 }
 
-func (r RGBStrip) TheaterChase(color uint32, waitMS time.Duration, iterations int) {
+func (r RGBStrip) customTheaterChase(color uint32, waitMS time.Duration, iterations int) {
 	for i := 0; i < iterations; i++ {
 		for j := 0; j < 3; j++ {
 			for k := 0; k < r.length; k += 3 {
@@ -49,8 +49,8 @@ func (r RGBStrip) TheaterChase(color uint32, waitMS time.Duration, iterations in
 	}
 }
 
-func (r RGBStrip) DefaultTheaterChase(color uint32) {
-	r.TheaterChase(color, 50, 10)
+func (r RGBStrip) TheaterChase(color uint32) {
+	r.customTheaterChase(color, 50, 10)
 }
 
 func ColorWheel(pos uint32) uint32 {
@@ -75,7 +75,7 @@ func ColorWheel(pos uint32) uint32 {
 	return RgbToColor(int(r), int(g), int(b))
 }
 
-func (r RGBStrip) Rainbow(waitMs time.Duration, iterations int) {
+func (r RGBStrip) customRainbow(waitMs time.Duration, iterations int) {
 	for i := 0; i < 256*iterations; i++ {
 		for j := 0; j < r.length; j++ {
 			r.ws2811.Leds(0)[i] = ColorWheel(uint32(i+j) & 255)
@@ -88,11 +88,11 @@ func (r RGBStrip) Rainbow(waitMs time.Duration, iterations int) {
 	}
 }
 
-func (r RGBStrip) DefaultRainbow() {
-	r.Rainbow(20, 1)
+func (r RGBStrip) Rainbow() {
+	r.customRainbow(20, 1)
 }
 
-func (r RGBStrip) RainbowCycle(waitMs time.Duration, iterations int) {
+func (r RGBStrip) customRainbowCycle(waitMs time.Duration, iterations int) {
 	for i := 0; i < 256*iterations; i++ {
 		for j := 0; j < r.length; j++ {
 			r.ws2811.Leds(0)[i] = ColorWheel(uint32(int(i*256/r.length) + j&255))
@@ -105,11 +105,11 @@ func (r RGBStrip) RainbowCycle(waitMs time.Duration, iterations int) {
 	}
 }
 
-func (r RGBStrip) DefaultRainbowCycle() {
-	r.RainbowCycle(20, 5)
+func (r RGBStrip) RainbowCycle() {
+	r.customRainbowCycle(20, 5)
 }
 
-func (r RGBStrip) TheaterChaseRainbow(waitMs time.Duration) {
+func (r RGBStrip) customTheaterChaseRainbow(waitMs time.Duration) {
 	for i := 0; i < 256; i++ {
 		for j := 0; j < 3; j++ {
 			for k := 0; k < r.length; k += 3 {
@@ -127,8 +127,8 @@ func (r RGBStrip) TheaterChaseRainbow(waitMs time.Duration) {
 	}
 }
 
-func (r RGBStrip) DefaultTheaterChaseRainbow() {
-	r.TheaterChaseRainbow(50)
+func (r RGBStrip) TheaterChaseRainbow() {
+	r.customTheaterChaseRainbow(50)
 }
 
 func (r RGBStrip) ApplyColors(c [8]uint32) {
