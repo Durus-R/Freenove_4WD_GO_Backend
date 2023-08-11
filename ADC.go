@@ -5,7 +5,6 @@ import (
 	"github.com/go-daq/smbus"
 	"log"
 	"math"
-	"os/user"
 )
 
 type ADC struct {
@@ -17,10 +16,6 @@ type ADC struct {
 }
 
 func CreateADC() ADC {
-	usr, _ := user.Current()
-	if usr.Name != "root" {
-		log.Fatal("Please restart this system with root access")
-	}
 	conn, err := smbus.Open(1, 0x48)
 
 	defer func(conn *smbus.Conn) {
