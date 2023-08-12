@@ -5,6 +5,7 @@ import (
 	"os/user"
 )
 
+// TODO: Ultrasonic, Camera
 func main() {
 	usr, _ := user.Current()
 	if usr.Name != "root" {
