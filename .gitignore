@@ -1,1 +1,1 @@
-dist/proto
+dist/proto/*.go
