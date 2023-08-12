@@ -15,7 +15,7 @@ type ADC struct {
 	bus        *smbus.Conn
 }
 
-func CreateADC() ADC {
+func CreateADC() *ADC {
 	conn, err := smbus.Open(1, 0x48)
 
 	defer func(conn *smbus.Conn) {
@@ -42,7 +42,7 @@ func CreateADC() ADC {
 			index = "ADS7830"
 		}
 	}
-	return ADC{
+	return &ADC{
 		address:    0x48,
 		pcf8591Cmd: 0x40,
 		ads7830Cmd: 0x84,
@@ -63,8 +63,7 @@ func sortArray(arr [9]uint8) [9]uint8 {
 	return arr
 }
 
-// TODO: Pass the errors one stage higer!
-func (a ADC) analogReadPCF8591(channel uint8) uint8 {
+func (a *ADC) analogReadPCF8591(channel uint8) (uint8, error) {
 	measures := [9]uint8{}
 	err := errors.New("") // Empty Error
 	for i := 0; i < 9; i++ {
@@ -72,31 +71,36 @@ func (a ADC) analogReadPCF8591(channel uint8) uint8 {
 			a.pcf8591Cmd+channel)
 		if err != nil {
 			log.Print("Error while reading: ", err)
+			return 0, err
 		}
 	}
 	sorted := sortArray(measures)
-	return sorted[4]
+	return sorted[4], nil
 }
 
-func (a ADC) receivePCF8591(channel uint8) float64 {
+func (a *ADC) receivePCF8591(channel uint8) (float64, error) {
 	var value1 uint8
 	var value2 uint8
 	for {
-		value1 = a.analogReadPCF8591(channel)
-		value2 = a.analogReadPCF8591(channel)
+		value1, _ = a.analogReadPCF8591(channel)
+		value2, _ = a.analogReadPCF8591(channel)
 		if value1 == value2 {
+			if value1 == 0 {
+				return 0, errors.New("something failed while reading")
+			}
 			break
 		}
 	}
 	result := float64(value1) / 256.0 * 3.3
-	return math.Round(result*100) / 100
+	return math.Round(result*100) / 100, nil
 }
 
-func (a ADC) receiveADS7830(channel uint8) float64 {
+func (a *ADC) receiveADS7830(channel uint8) (float64, error) {
 	commandSet := a.ads7830Cmd | ((((channel << 2) | (channel >> 1)) & 0x07) << 4)
 	_, err := a.bus.WriteByte(commandSet)
 	if err != nil {
 		log.Print("Error writing to bus: ", err)
+		return 0, err
 	}
 	var value1 uint8
 	var value2 uint8
@@ -108,27 +112,42 @@ func (a ADC) receiveADS7830(channel uint8) float64 {
 		}
 	}
 	result := float64(value1) / 255 * 3.3
-	return math.Round(result*100) / 100
+	return math.Round(result*100) / 100, nil
 }
 
-func (a ADC) receiveADC(channel uint8) float64 {
+func (a *ADC) receiveADC(channel uint8) (float64, error) {
 	var data float64
+	var err error
 	switch a.index {
 	case "PCF8591":
-		data = a.receivePCF8591(channel)
+		data, err = a.receivePCF8591(channel)
 	case "ADS7830":
-		data = a.receiveADS7830(channel)
+		data, err = a.receiveADS7830(channel)
 	}
-	return data
+	return data, err
 }
 
-func (a ADC) Battery() float64 {
-	return a.receiveADC(2) * 8
+func (a *ADC) Battery() (float64, error) {
+	res, err := a.receiveADC(2)
+	return res * 8, err
 }
 
-func (a ADC) IDR() [2]float64 {
+func (a *ADC) IDR() ([2]float64, error) {
+	var (
+		left  float64
+		right float64
+		err   error
+	)
+	left, err = a.receiveADC(0)
+	if err != nil {
+		return [2]float64{}, err
+	}
+	right, err = a.receiveADC(1)
+	if err != nil {
+		return [2]float64{}, err
+	}
 	return [2]float64{
-		a.receiveADC(0),
-		a.receiveADC(1),
-	}
+		left,
+		right,
+	}, nil
 }

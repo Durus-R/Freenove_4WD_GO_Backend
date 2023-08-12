@@ -11,18 +11,18 @@ import (
 )
 
 type Note struct {
-	duration float64 // Beats - see https://github.com/hybridgroup/gobot/blob/v2.1.1/drivers/gpio/buzzer_driver.go#L10
-	pitch    float64 // Hz or 0 in a Pause
+	Duration float64 // Beats - see https://github.com/hybridgroup/gobot/blob/v2.1.1/drivers/gpio/buzzer_driver.go#L10
+	Pitch    float64 // Hz or 0 in a Pause
 }
 
 type Song []Note
 
-func (s Song) EstimatedDuration(bpm int) float64 {
+func (s Song) EstimatedDuration(bpm float64) float64 {
 	res := 0.0
 	for _, tone := range s {
-		res += tone.duration
+		res += tone.Duration
 	}
-	return float64(60/bpm) * res
+	return 60 / bpm * res
 }
 
 func containsLetter(s string) bool {
@@ -51,7 +51,7 @@ func ParseSongFile(reader io.Reader) (Song, error) {
 
 		duration, err := strconv.ParseFloat(subfields[0], 64)
 		if err != nil {
-			return nil, fmt.Errorf("can't parse duration: %v", err)
+			return nil, fmt.Errorf("can't parse Duration: %v", err)
 		}
 
 		pitch := 0.0
@@ -61,17 +61,17 @@ func ParseSongFile(reader io.Reader) (Song, error) {
 				var ok bool
 				pitch, ok = PitchMap[pitchString]
 				if !ok {
-					return nil, fmt.Errorf("unknown pitch: %v", err)
+					return nil, fmt.Errorf("unknown Pitch: %v", err)
 				}
 			} else {
 				pitch, err = strconv.ParseFloat(pitchString, 64)
 				if err != nil {
-					return nil, fmt.Errorf("can't parse pitch: %v", err)
+					return nil, fmt.Errorf("can't parse Pitch: %v", err)
 				}
 			}
 		}
 
-		song = append(song, Note{duration: duration, pitch: pitch})
+		song = append(song, Note{Duration: duration, Pitch: pitch})
 	}
 
 	if err := scanner.Err(); err != nil {
