@@ -2,6 +2,10 @@ syntax = "proto3";
 
 package main;
 
+
+
+option go_package = "github.com/Durus-R/Freenove_4WD_GO_Backend/proto";
+
 import "google/protobuf/empty.proto";
 
 service Servo {

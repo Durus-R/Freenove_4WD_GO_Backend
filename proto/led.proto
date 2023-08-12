@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package main;
 
+
+option go_package = "github.com/Durus-R/Freenove_4WD_GO_Backend/proto";
+
 import "google/protobuf/empty.proto";
 
 service LED {
@@ -17,7 +20,7 @@ service LED {
 
 message Color {
   int32 red = 1;
-  int32 green = 2; // TODO: Really green?
+  int32 green = 2;
   int32 blue = 3;
 }
 
