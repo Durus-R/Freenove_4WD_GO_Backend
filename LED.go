@@ -16,9 +16,9 @@ type RGBStrip struct {
 	length int
 }
 
-// TODO: Make everything stoppable and send when done!
 func (r RGBStrip) customColorWipe(color uint32, waitMs time.Duration) {
 	for i := 0; i < r.length; i++ {
+
 		r.ws2811.Leds(0)[i] = color
 		err := r.ws2811.Render()
 		if err != nil {
@@ -26,32 +26,46 @@ func (r RGBStrip) customColorWipe(color uint32, waitMs time.Duration) {
 		}
 		time.Sleep(waitMs * time.Millisecond)
 	}
+
 }
 
 func (r RGBStrip) ColorWipe(color uint32) {
 	r.customColorWipe(color, 50)
 }
 
-func (r RGBStrip) customTheaterChase(color uint32, waitMS time.Duration, iterations int) {
+func (r RGBStrip) customTheaterChase(color uint32, waitMS time.Duration,
+	iterations int, finish chan struct{}, done chan error) {
 	for i := 0; i < iterations; i++ {
 		for j := 0; j < 3; j++ {
-			for k := 0; k < r.length; k += 3 {
-				r.ws2811.Leds(0)[k+j] = color
+			select {
+			case <-finish:
+				{
+					r.Black()
+					if done != nil {
+						done <- nil
+					}
+					return
+				}
+			default:
+				for k := 0; k < r.length; k += 3 {
+					r.ws2811.Leds(0)[k+j] = color
+				}
+				err := r.ws2811.Render()
+				if err != nil {
+					log.Fatal("Error at rendering: ", err)
+				}
+				time.Sleep(waitMS * time.Millisecond)
+				for k := 0; k < r.length; k += 3 {
+					r.ws2811.Leds(0)[k+j] = 0
+				}
 			}
-			err := r.ws2811.Render()
-			if err != nil {
-				log.Fatal("Error at rendering: ", err)
-			}
-			time.Sleep(waitMS * time.Millisecond)
-			for k := 0; k < r.length; k += 3 {
-				r.ws2811.Leds(0)[k+j] = 0
-			}
+
 		}
 	}
 }
 
-func (r RGBStrip) TheaterChase(color uint32) {
-	r.customTheaterChase(color, 50, 10)
+func (r RGBStrip) TheaterChase(color uint32, finish chan struct{}, done chan error) {
+	r.customTheaterChase(color, 50, 10, finish, done)
 }
 
 func ColorWheel(pos uint32) uint32 {
@@ -76,60 +90,107 @@ func ColorWheel(pos uint32) uint32 {
 	return RgbToColor(int(r), int(g), int(b))
 }
 
-func (r RGBStrip) customRainbow(waitMs time.Duration, iterations int) {
+func (r RGBStrip) customRainbow(waitMs time.Duration, iterations int,
+	finish chan struct{}, done chan error) {
 	for i := 0; i < 256*iterations; i++ {
-		for j := 0; j < r.length; j++ {
-			r.ws2811.Leds(0)[i] = ColorWheel(uint32(i+j) & 255)
+		select {
+		case <-finish:
+			{
+				r.Black()
+				if done != nil {
+					done <- nil
+				}
+				return
+			}
+		default:
+			{
+				for j := 0; j < r.length; j++ {
+					r.ws2811.Leds(0)[i] = ColorWheel(uint32(i+j) & 255)
+				}
+				err := r.ws2811.Render()
+				if err != nil {
+					log.Fatal("Error at rendering: ", err)
+				}
+				time.Sleep(waitMs * time.Millisecond)
+			}
 		}
-		err := r.ws2811.Render()
-		if err != nil {
-			log.Fatal("Error at rendering: ", err)
-		}
-		time.Sleep(waitMs * time.Millisecond)
+
 	}
 }
 
-func (r RGBStrip) Rainbow() {
-	r.customRainbow(20, 1)
+func (r RGBStrip) Rainbow(finish chan struct{}, done chan error) {
+	r.customRainbow(20, 1, finish, done)
 }
 
-func (r RGBStrip) customRainbowCycle(waitMs time.Duration, iterations int) {
+func (r RGBStrip) customRainbowCycle(waitMs time.Duration, iterations int,
+	finish chan struct{}, done chan error) {
 	for i := 0; i < 256*iterations; i++ {
-		for j := 0; j < r.length; j++ {
-			r.ws2811.Leds(0)[i] = ColorWheel(uint32(int(i*256/r.length) + j&255))
+		select {
+		case <-finish:
+			{
+				r.Black()
+				if done != nil {
+					done <- nil
+				}
+				return
+			}
+		default:
+			{
+				for j := 0; j < r.length; j++ {
+					r.ws2811.Leds(0)[i] = ColorWheel(uint32(int(i*256/r.length) + j&255))
+				}
+				err := r.ws2811.Render()
+				if err != nil {
+					log.Fatal("Error at rendering: ", err)
+				}
+				time.Sleep(waitMs * time.Millisecond)
+			}
 		}
-		err := r.ws2811.Render()
-		if err != nil {
-			log.Fatal("Error at rendering: ", err)
-		}
-		time.Sleep(waitMs * time.Millisecond)
 	}
 }
 
-func (r RGBStrip) RainbowCycle() {
-	r.customRainbowCycle(20, 5)
+func (r RGBStrip) RainbowCycle(finish chan struct{}, done chan error) {
+	r.customRainbowCycle(20, 5, finish, done)
 }
 
-func (r RGBStrip) customTheaterChaseRainbow(waitMs time.Duration) {
+func (r RGBStrip) customTheaterChaseRainbow(waitMs time.Duration,
+	finish chan struct{}, done chan error) {
 	for i := 0; i < 256; i++ {
 		for j := 0; j < 3; j++ {
-			for k := 0; k < r.length; k += 3 {
-				r.ws2811.Leds(0)[k+j] = ColorWheel(uint32(k+j)) % 255
-			}
-			err := r.ws2811.Render()
-			if err != nil {
-				log.Fatal("Error at rendering: ", err)
-			}
-			time.Sleep(waitMs * time.Millisecond)
-			for k := 0; k < r.length; k += 3 {
-				r.ws2811.Leds(0)[k+j] = 0
+			select {
+			case <-finish:
+				{
+					r.Black()
+					if done != nil {
+						done <- nil
+					}
+					return
+				}
+			default:
+				{
+					for k := 0; k < r.length; k += 3 {
+						r.ws2811.Leds(0)[k+j] = ColorWheel(uint32(k+j)) % 255
+					}
+					err := r.ws2811.Render()
+					if err != nil {
+						log.Fatal("Error at rendering: ", err)
+					}
+					time.Sleep(waitMs * time.Millisecond)
+					for k := 0; k < r.length; k += 3 {
+						r.ws2811.Leds(0)[k+j] = 0
+					}
+				}
 			}
 		}
 	}
 }
 
-func (r RGBStrip) TheaterChaseRainbow() {
-	r.customTheaterChaseRainbow(50)
+func (r RGBStrip) TheaterChaseRainbow(finish chan struct{}, done chan error) {
+	r.customTheaterChaseRainbow(50, finish, done)
+}
+
+func (r RGBStrip) Black() {
+	r.ColorWipe(RgbToColor(0, 0, 0))
 }
 
 func (r RGBStrip) ApplyColors(c [8]uint32) {
