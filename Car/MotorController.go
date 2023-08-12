@@ -84,7 +84,7 @@ func GetChannelMapRightLow() ChannelMap {
 	return ChannelMap{4, 5}
 }
 
-func NewMotorController() MotorController {
+func NewMotorController() *MotorController {
 	adaptor := raspi.NewAdaptor()
 	pca9685 := i2c.NewPCA9685Driver(adaptor, i2c.WithBus(1), i2c.WithAddress(0x40))
 
@@ -98,10 +98,10 @@ func NewMotorController() MotorController {
 		log.Fatal("Could not set Frequency: ", err)
 	}
 
-	return MotorController{pca9685: pca9685}
+	return &MotorController{pca9685: pca9685}
 }
 
-func (m MotorController) SetAngle(channel int, angle uint16) {
+func (m *MotorController) SetAngle(channel int, angle uint16) {
 	res := angle + 10/0.09
 	switch channel {
 	case 0:
@@ -123,7 +123,7 @@ func (m MotorController) SetAngle(channel int, angle uint16) {
 
 }
 
-func (m MotorController) SetMotorDuty(c ChannelMap, duty int) {
+func (m *MotorController) SetMotorDuty(c ChannelMap, duty int) {
 	if duty == 0 {
 		m.SetNullDuty(c)
 		return
@@ -135,7 +135,7 @@ func (m MotorController) SetMotorDuty(c ChannelMap, duty int) {
 	m.SetCorrectedDuty(c, duty)
 }
 
-func (m MotorController) SetCorrectedDuty(c ChannelMap, duty int) {
+func (m *MotorController) SetCorrectedDuty(c ChannelMap, duty int) {
 	if duty < 0 {
 		err := m.pca9685.SetPWM(c.negativeChannel, 0, 0)
 		if err != nil {
@@ -157,7 +157,7 @@ func (m MotorController) SetCorrectedDuty(c ChannelMap, duty int) {
 	}
 }
 
-func (m MotorController) SetNullDuty(c ChannelMap) {
+func (m *MotorController) SetNullDuty(c ChannelMap) {
 	err := m.pca9685.SetPWM(c.negativeChannel, 0, 4095)
 	if err != nil {
 		log.Print("Error in PWM: ", err)
@@ -169,7 +169,7 @@ func (m MotorController) SetNullDuty(c ChannelMap) {
 
 }
 
-func (m MotorController) SetDirection(d Direction) {
+func (m *MotorController) SetDirection(d Direction) {
 	m.SetMotorDuty(GetChannelMapLeftUp(), d.LeftUp)
 	m.SetMotorDuty(GetChannelMapLeftLow(), d.LeftLow)
 	m.SetMotorDuty(GetChannelMapRightUp(), d.RightUp)
