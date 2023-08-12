@@ -1,4 +1,4 @@
-package main
+package Car
 
 import (
 	"errors"
@@ -8,11 +8,11 @@ import (
 )
 
 type ADC struct {
-	Address    uint8
-	Pcf8591Cmd uint8
-	Ads7830Cmd uint8
-	Index      string
-	Bus        *smbus.Conn
+	address    uint8
+	pcf8591Cmd uint8
+	ads7830Cmd uint8
+	index      string
+	bus        *smbus.Conn
 }
 
 func CreateADC() ADC {
@@ -43,11 +43,11 @@ func CreateADC() ADC {
 		}
 	}
 	return ADC{
-		Address:    0x48,
-		Pcf8591Cmd: 0x40,
-		Ads7830Cmd: 0x84,
-		Index:      index,
-		Bus:        conn,
+		address:    0x48,
+		pcf8591Cmd: 0x40,
+		ads7830Cmd: 0x84,
+		index:      index,
+		bus:        conn,
 	}
 
 }
@@ -63,12 +63,13 @@ func sortArray(arr [9]uint8) [9]uint8 {
 	return arr
 }
 
+// TODO: Pass the errors one stage higer!
 func (a ADC) analogReadPCF8591(channel uint8) uint8 {
 	measures := [9]uint8{}
 	err := errors.New("") // Empty Error
 	for i := 0; i < 9; i++ {
-		measures[i], err = a.Bus.ReadReg(a.Address,
-			a.Pcf8591Cmd+channel)
+		measures[i], err = a.bus.ReadReg(a.address,
+			a.pcf8591Cmd+channel)
 		if err != nil {
 			log.Print("Error while reading: ", err)
 		}
@@ -92,16 +93,16 @@ func (a ADC) receivePCF8591(channel uint8) float64 {
 }
 
 func (a ADC) receiveADS7830(channel uint8) float64 {
-	commandSet := a.Ads7830Cmd | ((((channel << 2) | (channel >> 1)) & 0x07) << 4)
-	_, err := a.Bus.WriteByte(commandSet)
+	commandSet := a.ads7830Cmd | ((((channel << 2) | (channel >> 1)) & 0x07) << 4)
+	_, err := a.bus.WriteByte(commandSet)
 	if err != nil {
-		log.Print("Error writing to Bus: ", err)
+		log.Print("Error writing to bus: ", err)
 	}
 	var value1 uint8
 	var value2 uint8
 	for {
-		value1, _ = a.Bus.ReadReg(a.Address, 0)
-		value2, _ = a.Bus.ReadReg(a.Address, 0)
+		value1, _ = a.bus.ReadReg(a.address, 0)
+		value2, _ = a.bus.ReadReg(a.address, 0)
 		if value1 == value2 {
 			break
 		}
@@ -112,7 +113,7 @@ func (a ADC) receiveADS7830(channel uint8) float64 {
 
 func (a ADC) receiveADC(channel uint8) float64 {
 	var data float64
-	switch a.Index {
+	switch a.index {
 	case "PCF8591":
 		data = a.receivePCF8591(channel)
 	case "ADS7830":
