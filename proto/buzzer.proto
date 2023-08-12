@@ -8,9 +8,9 @@ option go_package = "github.com/Durus-R/Freenove_4WD_GO_Backend/proto";
 import "google/protobuf/empty.proto";
 
 service Buzzer {
-  rpc On (google.protobuf.Empty) returns (Error) {}
-  rpc Off (google.protobuf.Empty) returns (Error) {}
-  rpc Toggle (google.protobuf.Empty) returns (Error) {}
+  rpc On (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc Off (google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc Toggle (google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc SetBPM (SetBPMRequest) returns (google.protobuf.Empty) {}
   rpc CalculateDuration(Song) returns (SongDuration) {}
   rpc ParseSong(SongStringPayload) returns (Song) {}
@@ -39,10 +39,7 @@ message SetBPMRequest {
   int32 bpm = 1;
 }
 
-message Error {
-  string text = 1;
-  bool isError = 2;
-}
+
 
 message Note {
   float duration = 1;
