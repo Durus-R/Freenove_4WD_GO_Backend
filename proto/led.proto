@@ -16,6 +16,11 @@ service LED {
   rpc StartTheaterChaseRainbow (google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc ApplyCustomColors (Colors) returns (google.protobuf.Empty) {}
   rpc IsDark (google.protobuf.Empty) returns (IsDarkResult) {}
+  rpc EffectIsRunning (google.protobuf.Empty) returns (LockResult) {}
+}
+
+message LockResult {
+  bool locked = 1;
 }
 
 message Color {

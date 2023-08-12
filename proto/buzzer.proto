@@ -12,11 +12,13 @@ service Buzzer {
   rpc Off (google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc Toggle (google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc SetBPM (SetBPMRequest) returns (google.protobuf.Empty) {}
+  rpc GetBPM (google.protobuf.Empty) returns (GetBPMRequest) {}
   rpc CalculateDuration(Song) returns (SongDuration) {}
   rpc ParseSong(SongStringPayload) returns (Song) {}
-  rpc AsyncPlaySong(Song) returns (SongIsPlaying) {}
-  rpc DoesSongStillPlay(SongIsPlaying) returns (SongStatus) {}
-  rpc StopSong(SongIsPlaying) returns (google.protobuf.Empty) {}
+  rpc AsyncPlaySong(Song) returns (google.protobuf.Empty) {}
+  rpc DoesSongStillPlay(google.protobuf.Empty) returns (SongStatus) {}
+  rpc StopSong(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc GetSong(google.protobuf.Empty) returns (Song) {}
 }
 
 message SongStringPayload {
@@ -31,15 +33,13 @@ message SongDuration {
   float length = 1;
 }
 
-message SongIsPlaying {
-  int32 uid = 1;
-}
-
 message SetBPMRequest {
-  int32 bpm = 1;
+  float bpm = 1;
 }
 
-
+message GetBPMRequest {
+  float bpm = 1;
+}
 
 message Note {
   float duration = 1;
