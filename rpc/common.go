@@ -3,7 +3,7 @@ package rpc
 import (
 	pb "Freenove_4WD_GO_Backend/dist/proto"
 	"context"
-	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/protobuf/ptypes/empty"
 	"net/http"
 	"time"
 )

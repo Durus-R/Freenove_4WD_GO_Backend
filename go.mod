@@ -8,7 +8,6 @@ require (
 	github.com/tractus/piCamera v0.0.0-20190216022846-6f9edaea6563
 	gobot.io/x/gobot/v2 v2.1.1
 	google.golang.org/grpc v1.57.0
-	google.golang.org/protobuf v1.31.0
 )
 
 require (

@@ -3,7 +3,7 @@ package rpc
 import (
 	car "Freenove_4WD_GO_Backend/Car"
 	pb "Freenove_4WD_GO_Backend/dist/proto"
-	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/protobuf/ptypes/empty"
 	"log"
 	"time"
 )
