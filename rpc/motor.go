@@ -1,7 +1,7 @@
 package rpc
 
 import (
-	car "Freenove_4WD_GO_Backend/Car"
+	car "Freenove_4WD_GO_Backend/car"
 	pb "Freenove_4WD_GO_Backend/dist/proto"
 	"context"
 	"google.golang.org/protobuf/types/known/emptypb"
