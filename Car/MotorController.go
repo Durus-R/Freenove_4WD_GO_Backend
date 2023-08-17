@@ -84,25 +84,26 @@ func GetChannelMapRightLow() ChannelMap {
 	return ChannelMap{4, 5}
 }
 
-func NewMotorController() *MotorController {
+func NewMotorController() (*MotorController, error) {
 	adaptor := raspi.NewAdaptor()
 	pca9685 := i2c.NewPCA9685Driver(adaptor, i2c.WithBus(1), i2c.WithAddress(0x40))
 
 	err := pca9685.Start()
 	if err != nil {
-		log.Fatal("Error in I2C: ", err)
+		return nil, err
 	}
 
 	err = pca9685.SetPWMFreq(50.0)
 	if err != nil {
-		log.Fatal("Could not set Frequency: ", err)
+		log.Print("Could not set Frequency: ", err)
+		return nil, err
 	}
 
-	return &MotorController{pca9685: pca9685}
+	return &MotorController{pca9685: pca9685}, nil
 }
 
 func (m *MotorController) SetAngle(channel int, angle uint16) {
-	res := angle + 10/0.09
+	res := angle + 111
 	switch channel {
 	case 0:
 		{
