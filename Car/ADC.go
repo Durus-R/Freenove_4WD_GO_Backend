@@ -15,7 +15,7 @@ type ADC struct {
 	bus        *smbus.Conn
 }
 
-func CreateADC() *ADC {
+func NewADC() *ADC {
 	conn, err := smbus.Open(1, 0x48)
 
 	defer func(conn *smbus.Conn) {
