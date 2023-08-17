@@ -7,15 +7,11 @@ option go_package = "github.com/Durus-R/Freenove_4WD_GO_Backend/proto";
 import "google/protobuf/empty.proto";
 
 service ADC {
-  rpc Battery (google.protobuf.Empty) returns (BatteryState) {}
-  rpc IDR (google.protobuf.Empty) returns (IDRState) {}
+  rpc Stream (google.protobuf.Empty) returns (stream ADCState) {}
 }
 
-message BatteryState {
+message ADCState {
   float loaded = 1;
-}
-
-message IDRState {
-  float left = 1;
-  float right = 2;
+  float left = 2;
+  float right = 3;
 }
