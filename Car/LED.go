@@ -262,7 +262,7 @@ func (r *RGBStrip) IsLocked() bool {
 	return r.locked
 }
 
-func CreateRGBStrip() RGBStrip {
+func NewRGBStrip() *RGBStrip {
 	opt := ws281x.DefaultOptions
 	opt.Channels[0].Brightness = 255
 	opt.Channels[0].LedCount = 8
@@ -279,7 +279,7 @@ func CreateRGBStrip() RGBStrip {
 	}
 	defer ws2811.Fini()
 
-	return RGBStrip{
+	return &RGBStrip{
 		ws2811: ws2811,
 		length: 8,
 		mutex:  &sync.Mutex{},
