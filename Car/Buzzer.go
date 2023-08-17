@@ -65,7 +65,7 @@ func (b *Buzzer) PlaySong(song Song, finish chan struct{}) error {
 	return nil
 }
 
-func CreateBuzzer() (*Buzzer, error) {
+func NewBuzzer() (*Buzzer, error) {
 	rpi := raspi.NewAdaptor()
 	buzzer := gpio.NewBuzzerDriver(rpi, strconv.Itoa(17))
 	err := buzzer.Start()
