@@ -4,7 +4,7 @@ package main;
 
 
 
-option go_package = "github.com/Durus-R/Freenove_4WD_GO_Backend/proto";
+option go_package = "Freenove_4WD_GO_Backend/dist/proto";
 
 import "google/protobuf/empty.proto";
 
