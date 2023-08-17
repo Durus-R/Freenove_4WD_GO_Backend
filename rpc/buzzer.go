@@ -4,7 +4,7 @@ import (
 	car "Freenove_4WD_GO_Backend/Car"
 	pb "Freenove_4WD_GO_Backend/dist/proto"
 	"context"
-	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 	"strings"
 )
@@ -17,27 +17,27 @@ type BuzzerServer struct {
 	isClosing    bool
 }
 
-func (s *BuzzerServer) On(context.Context, *empty.Empty) (*empty.Empty, error) {
+func (s *BuzzerServer) On(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	err := s.Buzz.On()
 	return nil, err
 }
 
-func (s *BuzzerServer) Off(context.Context, *empty.Empty) (*empty.Empty, error) {
+func (s *BuzzerServer) Off(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	err := s.Buzz.Off()
 	return nil, err
 }
 
-func (s *BuzzerServer) Toggle(context.Context, *empty.Empty) (*empty.Empty, error) {
+func (s *BuzzerServer) Toggle(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	err := s.Buzz.Toggle()
 	return nil, err
 }
 
-func (s *BuzzerServer) SetBPM(_ context.Context, bpm *pb.SetBPMRequest) (*empty.Empty, error) {
+func (s *BuzzerServer) SetBPM(_ context.Context, bpm *pb.SetBPMRequest) (*emptypb.Empty, error) {
 	err := s.Buzz.SetBPM(float64(bpm.GetBpm()))
 	return nil, err
 }
 
-func (s *BuzzerServer) GetBPM(context.Context, *empty.Empty) (*pb.GetBPMRequest, error) {
+func (s *BuzzerServer) GetBPM(context.Context, *emptypb.Empty) (*pb.GetBPMRequest, error) {
 	return &pb.GetBPMRequest{Bpm: float32(s.Buzz.GetBPM())}, nil
 }
 
@@ -84,7 +84,7 @@ func exportSong(song car.Song) *pb.Song {
 	return &pb.Song{Notes: notesPointers}
 }
 
-func (s *BuzzerServer) AsyncPlaySong(_ context.Context, sng *pb.Song) (*empty.Empty, error) {
+func (s *BuzzerServer) AsyncPlaySong(_ context.Context, sng *pb.Song) (*emptypb.Empty, error) {
 	s.currentSong = importSong(sng)
 	s.signalFinish = make(chan struct{})
 	go func() {
@@ -99,13 +99,13 @@ func (s *BuzzerServer) AsyncPlaySong(_ context.Context, sng *pb.Song) (*empty.Em
 	return nil, nil
 }
 
-func (s *BuzzerServer) DoesSongStillPlay(context.Context, *empty.Empty) (*pb.SongStatus, error) {
+func (s *BuzzerServer) DoesSongStillPlay(context.Context, *emptypb.Empty) (*pb.SongStatus, error) {
 	return &pb.SongStatus{
 		IsPlaying: s.currentSong != nil,
 	}, nil
 }
 
-func (s *BuzzerServer) StopSong(context.Context, *empty.Empty) (*empty.Empty, error) {
+func (s *BuzzerServer) StopSong(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	if s.signalFinish != nil {
 		if s.isClosing == false {
 			s.isClosing = true
@@ -115,6 +115,6 @@ func (s *BuzzerServer) StopSong(context.Context, *empty.Empty) (*empty.Empty, er
 	return nil, nil
 }
 
-func (s *BuzzerServer) GetSong(context.Context, *empty.Empty) (*pb.Song, error) {
+func (s *BuzzerServer) GetSong(context.Context, *emptypb.Empty) (*pb.Song, error) {
 	return exportSong(s.currentSong), nil
 }

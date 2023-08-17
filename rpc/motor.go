@@ -4,7 +4,7 @@ import (
 	car "Freenove_4WD_GO_Backend/Car"
 	pb "Freenove_4WD_GO_Backend/dist/proto"
 	"context"
-	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type MotorServer struct {
@@ -13,37 +13,37 @@ type MotorServer struct {
 	currentMotorModel car.Direction
 }
 
-func (s *MotorServer) Forward(context.Context, *empty.Empty) (*empty.Empty, error) {
+func (s *MotorServer) Forward(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	s.MC.SetDirection(car.GetDirectionForward())
 	s.currentMotorModel = car.GetDirectionForward()
 	return nil, nil
 }
 
-func (s *MotorServer) Backward(context.Context, *empty.Empty) (*empty.Empty, error) {
+func (s *MotorServer) Backward(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	s.MC.SetDirection(car.GetDirectionBackward())
 	s.currentMotorModel = car.GetDirectionBackward()
 	return nil, nil
 }
 
-func (s *MotorServer) Left(context.Context, *empty.Empty) (*empty.Empty, error) {
+func (s *MotorServer) Left(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	s.MC.SetDirection(car.GetDirectionLeft())
 	s.currentMotorModel = car.GetDirectionLeft()
 	return nil, nil
 }
 
-func (s *MotorServer) Right(context.Context, *empty.Empty) (*empty.Empty, error) {
+func (s *MotorServer) Right(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	s.MC.SetDirection(car.GetDirectionRight())
 	s.currentMotorModel = car.GetDirectionRight()
 	return nil, nil
 }
 
-func (s *MotorServer) Halt(context.Context, *empty.Empty) (*empty.Empty, error) {
+func (s *MotorServer) Halt(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	s.MC.SetDirection(car.GetDirectionHalt())
 	s.currentMotorModel = car.GetDirectionHalt()
 	return nil, nil
 }
 
-func (s *MotorServer) SetMotorModel(_ context.Context, model *pb.MotorModel) (*empty.Empty, error) {
+func (s *MotorServer) SetMotorModel(_ context.Context, model *pb.MotorModel) (*emptypb.Empty, error) {
 	direction := car.Direction{
 		LeftUp:   int(model.LeftUp),
 		LeftLow:  int(model.LeftLow),
@@ -55,7 +55,7 @@ func (s *MotorServer) SetMotorModel(_ context.Context, model *pb.MotorModel) (*e
 	return nil, nil
 }
 
-func (s *MotorServer) GetMotorModel(_ context.Context, _ *empty.Empty) (*pb.MotorModel, error) {
+func (s *MotorServer) GetMotorModel(_ context.Context, _ *emptypb.Empty) (*pb.MotorModel, error) {
 	currentMM := s.currentMotorModel
 	return &pb.MotorModel{
 		LeftUp:   int32(currentMM.LeftUp),

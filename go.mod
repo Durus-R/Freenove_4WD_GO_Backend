@@ -4,7 +4,6 @@ go 1.20
 
 require (
 	github.com/go-daq/smbus v0.0.0-20201216173259-5725b4593606
-	github.com/golang/protobuf v1.5.3
 	github.com/rpi-ws281x/rpi-ws281x-go v1.0.10
 	github.com/tractus/piCamera v0.0.0-20190216022846-6f9edaea6563
 	gobot.io/x/gobot/v2 v2.1.1
@@ -15,6 +14,7 @@ require (
 require (
 	github.com/gofrs/uuid v4.4.0+incompatible // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

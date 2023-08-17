@@ -3,7 +3,7 @@ package rpc
 import (
 	car "Freenove_4WD_GO_Backend/Car"
 	pb "Freenove_4WD_GO_Backend/dist/proto"
-	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 	"time"
 )
@@ -13,7 +13,7 @@ type ADCServer struct {
 	ADC *car.ADC
 }
 
-func (a *ADCServer) Stream(_ *empty.Empty, srv pb.ADC_StreamServer) error {
+func (a *ADCServer) Stream(_ *emptypb.Empty, srv pb.ADC_StreamServer) error {
 	for {
 		battery, err := a.ADC.Battery()
 		if err != nil {

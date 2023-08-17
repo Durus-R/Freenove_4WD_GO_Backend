@@ -3,7 +3,7 @@ package rpc
 import (
 	car "Freenove_4WD_GO_Backend/Car"
 	pb "Freenove_4WD_GO_Backend/dist/proto"
-	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 	"time"
 )
@@ -13,7 +13,7 @@ type UltrasonicServer struct {
 	Ultrasonic *car.Ultrasonic
 }
 
-func (s UltrasonicServer) Probe(_ *empty.Empty, srv pb.Ultrasonic_ProbeServer) error {
+func (s UltrasonicServer) Probe(_ *emptypb.Empty, srv pb.Ultrasonic_ProbeServer) error {
 	for {
 		measure, err := s.Ultrasonic.Probe()
 		if err != nil {
