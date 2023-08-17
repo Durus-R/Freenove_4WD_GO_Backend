@@ -1,7 +1,7 @@
 package main
 
 import (
-	car "Freenove_4WD_GO_Backend/Car"
+	car "Freenove_4WD_GO_Backend/car"
 	pb "Freenove_4WD_GO_Backend/dist/proto"
 	"Freenove_4WD_GO_Backend/rpc"
 	"google.golang.org/grpc"
