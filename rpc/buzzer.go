@@ -11,39 +11,39 @@ import (
 
 type BuzzerServer struct {
 	pb.UnimplementedBuzzerServer
-	buzz         *car.Buzzer
+	Buzz         *car.Buzzer
 	currentSong  car.Song
 	signalFinish chan struct{}
 	isClosing    bool
 }
 
 func (s *BuzzerServer) On(context.Context, *empty.Empty) (*empty.Empty, error) {
-	err := s.buzz.On()
+	err := s.Buzz.On()
 	return nil, err
 }
 
 func (s *BuzzerServer) Off(context.Context, *empty.Empty) (*empty.Empty, error) {
-	err := s.buzz.Off()
+	err := s.Buzz.Off()
 	return nil, err
 }
 
 func (s *BuzzerServer) Toggle(context.Context, *empty.Empty) (*empty.Empty, error) {
-	err := s.buzz.Toggle()
+	err := s.Buzz.Toggle()
 	return nil, err
 }
 
 func (s *BuzzerServer) SetBPM(_ context.Context, bpm *pb.SetBPMRequest) (*empty.Empty, error) {
-	err := s.buzz.SetBPM(float64(bpm.GetBpm()))
+	err := s.Buzz.SetBPM(float64(bpm.GetBpm()))
 	return nil, err
 }
 
 func (s *BuzzerServer) GetBPM(context.Context, *empty.Empty) (*pb.GetBPMRequest, error) {
-	return &pb.GetBPMRequest{Bpm: float32(s.buzz.GetBPM())}, nil
+	return &pb.GetBPMRequest{Bpm: float32(s.Buzz.GetBPM())}, nil
 }
 
 func (s *BuzzerServer) CalculateDuration(_ context.Context, sng *pb.Song) (*pb.SongDuration, error) {
 	song := importSong(sng)
-	dur := song.EstimatedDuration(s.buzz.GetBPM())
+	dur := song.EstimatedDuration(s.Buzz.GetBPM())
 	return &pb.SongDuration{Length: float32(dur)}, nil
 
 }
@@ -88,7 +88,7 @@ func (s *BuzzerServer) AsyncPlaySong(_ context.Context, sng *pb.Song) (*empty.Em
 	s.currentSong = importSong(sng)
 	s.signalFinish = make(chan struct{})
 	go func() {
-		err := s.buzz.PlaySong(s.currentSong, s.signalFinish)
+		err := s.Buzz.PlaySong(s.currentSong, s.signalFinish)
 		if err != nil {
 			log.Println("Error at playing song: ", err)
 		}

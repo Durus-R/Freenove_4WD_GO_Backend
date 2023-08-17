@@ -11,7 +11,7 @@ import (
 
 type LEDServer struct {
 	pb.UnimplementedLEDServer
-	led          *car.RGBStrip
+	LED          *car.RGBStrip
 	signalFinish chan struct{}
 	closeLocker  sync.Mutex
 }
@@ -22,7 +22,7 @@ func (s *LEDServer) StopEffect(_ context.Context, _ *empty.Empty) (*empty.Empty,
 	if s.signalFinish != nil {
 		close(s.signalFinish)
 		time.Sleep(200 * time.Millisecond)
-		err = s.led.Black()
+		err = s.LED.Black()
 	}
 	s.closeLocker.Unlock()
 	return nil, err
@@ -35,7 +35,7 @@ func makeColor(col *pb.Color) uint32 {
 func (s *LEDServer) StartColorWipe(_ context.Context, col *pb.Color) (*empty.Empty, error) {
 	s.signalFinish = make(chan struct{})
 	color := makeColor(col)
-	err := s.led.ColorWipe(color)
+	err := s.LED.ColorWipe(color)
 	s.signalFinish = nil
 	return nil, err
 }
@@ -44,34 +44,34 @@ func (s *LEDServer) StartTheaterChase(_ context.Context, col *pb.Color) (*empty.
 	s.signalFinish = make(chan struct{})
 	color := makeColor(col)
 	go func() {
-		_ = s.led.TheaterChase(color, s.signalFinish)
+		_ = s.LED.TheaterChase(color, s.signalFinish)
 		s.signalFinish = nil
 	}()
 	return nil, nil
 }
 
-func (s *LEDServer) StartRainbow(_ context.Context, _ *pb.Color) (*empty.Empty, error) {
+func (s *LEDServer) StartRainbow(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
 	s.signalFinish = make(chan struct{})
 	go func() {
-		_ = s.led.Rainbow(s.signalFinish)
+		_ = s.LED.Rainbow(s.signalFinish)
 		s.signalFinish = nil
 	}()
 	return nil, nil
 }
 
-func (s *LEDServer) StartRainbowCycle(_ context.Context, _ *pb.Color) (*empty.Empty, error) {
+func (s *LEDServer) StartRainbowCycle(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
 	s.signalFinish = make(chan struct{})
 	go func() {
-		_ = s.led.RainbowCycle(s.signalFinish)
+		_ = s.LED.RainbowCycle(s.signalFinish)
 		s.signalFinish = nil
 	}()
 	return nil, nil
 }
 
-func (s *LEDServer) StartTheaterChaseRainbow(_ context.Context, _ *pb.Color) (*empty.Empty, error) {
+func (s *LEDServer) StartTheaterChaseRainbow(_ context.Context, _ *empty.Empty) (*empty.Empty, error) {
 	s.signalFinish = make(chan struct{})
 	go func() {
-		_ = s.led.TheaterChaseRainbow(s.signalFinish)
+		_ = s.LED.TheaterChaseRainbow(s.signalFinish)
 		s.signalFinish = nil
 	}()
 	return nil, nil
@@ -87,7 +87,7 @@ func makeColors(colors *pb.Colors) [8]uint32 {
 }
 
 func (s *LEDServer) ApplyCustomColors(_ context.Context, colors *pb.Colors) (*empty.Empty, error) {
-	err := s.led.ApplyColors(makeColors(colors))
+	err := s.LED.ApplyColors(makeColors(colors))
 	return nil, err
 }
 
@@ -96,5 +96,5 @@ func (s *LEDServer) IsDark(_ context.Context, _ *empty.Empty) (*pb.IsDarkResult,
 }
 
 func (s *LEDServer) EffectIsRunning(_ context.Context, _ *empty.Empty) (*pb.LockResult, error) {
-	return &pb.LockResult{Locked: s.led.IsLocked()}, nil
+	return &pb.LockResult{Locked: s.LED.IsLocked()}, nil
 }

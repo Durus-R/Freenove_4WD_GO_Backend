@@ -3,8 +3,9 @@ package rpc
 import (
 	car "Freenove_4WD_GO_Backend/Car"
 	pb "Freenove_4WD_GO_Backend/dist/proto"
-	"context"
 	"github.com/golang/protobuf/ptypes/empty"
+	"log"
+	"time"
 )
 
 type ADCServer struct {
@@ -12,17 +13,27 @@ type ADCServer struct {
 	ADC *car.ADC
 }
 
-func (s *ADCServer) Battery(_ context.Context, _ *empty.Empty) (*pb.BatteryState, error) {
-	batteryInPercent, err := s.ADC.Battery()
+func (a *ADCServer) Stream(_ *empty.Empty, srv pb.ADC_StreamServer) error {
+	for {
+		battery, err := a.ADC.Battery()
+		if err != nil {
+			log.Println("Failed to get Battery: ", err)
+			continue
+		}
 
-	return &pb.BatteryState{Loaded: float32(batteryInPercent)}, err
-}
+		idrProbe, err := a.ADC.IDR()
+		if err != nil {
+			log.Println("Failed to get IDR: ", err)
+			continue
+		}
 
-func (s *ADCServer) IDR(_ context.Context, _ *empty.Empty) (*pb.IDRState, error) {
-	idrMeasure, err := s.ADC.IDR()
+		err = srv.Send(&pb.ADCState{
+			Loaded: float32(battery),
+			Left:   float32(idrProbe[0]),
+			Right:  float32(idrProbe[1]),
+		})
 
-	return &pb.IDRState{
-		Left:  float32(idrMeasure[0]),
-		Right: float32(idrMeasure[1]),
-	}, err
+		time.Sleep(time.Second / 5)
+	}
+
 }
