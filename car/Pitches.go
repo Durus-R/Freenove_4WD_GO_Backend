@@ -1,4 +1,4 @@
-package Car
+package car
 
 var PitchMap = map[string]float64{
 	"Rest": 0,

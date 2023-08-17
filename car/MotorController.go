@@ -1,4 +1,4 @@
-package Car
+package car
 
 import (
 	"gobot.io/x/gobot/v2/drivers/i2c"
