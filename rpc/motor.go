@@ -4,7 +4,7 @@ import (
 	car "Freenove_4WD_GO_Backend/Car"
 	pb "Freenove_4WD_GO_Backend/dist/proto"
 	"context"
-	"google.golang.org/protobuf/ptypes/empty"
+	"github.com/golang/protobuf/ptypes/empty"
 )
 
 type MotorServer struct {
