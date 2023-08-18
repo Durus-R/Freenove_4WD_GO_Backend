@@ -13,10 +13,13 @@ DOCKER_EXEC_COMMAND := docker run --rm -v "$(shell pwd)":/usr/src/$(APP_NAME) --
 
 # Target for the build
 all:
+	bash check_go.sh
 	bash protoc.sh
 	$(BUILD_CMD) $(BUILD_TAG) -o "$(APP_NAME).$(shell uname -m)"
 
 cross:
+	docker info
+
 	docker buildx build --platform $(TARGET_ARCH_CROSS) --tag go-cross-builder .
 
 	$(DOCKER_EXEC_COMMAND) bash protoc.sh
@@ -24,5 +27,5 @@ cross:
 	$(DOCKER_EXEC_COMMAND) go build $(BUILD_TAG) -o "$(APP_NAME).arm64" -v
 
 cleanup:
-	rm Freenove_4WD_GO_Backend.*
+	rm $(APP_NAME).*
 	rm -rf dist
